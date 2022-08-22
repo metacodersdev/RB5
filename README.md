@@ -15,13 +15,13 @@ https://www.docker.com/get-started/
 Clone the project
 
 ```bash
-  git clone https://link-to-project
+  git clone https://github.com/metacodersdev/RB5.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd my-project
+  cd RB5
 ```
 
 Install dependencies
