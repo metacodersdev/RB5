@@ -1,0 +1,50 @@
+version: '3.7'
+
+
+services:
+  db:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin123
+      - MYSQL_DATABASE=reviewboard
+      - MYSQL_USER=reviewboard
+      - MYSQL_PASSWORD=reviewboard123
+    volumes:
+      - ./db_data:/var/lib/mysql
+    restart: 'on-failure'
+
+  memcached:
+    image: memcached:alpine
+    restart: 'on-failure'
+
+  reviewboard:
+    image: beanbag/reviewboard:5.0b2
+    depends_on:
+      - db
+      - memcached
+    environment:
+      - COMPANY=Metacoders
+      - DATABASE_TYPE=mysql
+      - DATABASE_SERVER=db
+      - DATABASE_USERNAME=reviewboard
+      - DATABASE_PASSWORD=reviewboard123
+      - DOMAIN=localhost
+      - ALLOWED_HOSTS=localhost
+    ports:
+      - 8080:8080
+    volumes:
+      - ./site:/site
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    depends_on:
+      - reviewboard
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    ports:
+      - 80:80
+    volumes:
+      - ./site:/var/www/reviewboard
+      - ./nginx_templates:/etc/nginx/conf.d
